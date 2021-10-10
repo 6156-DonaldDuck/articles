@@ -2,8 +2,8 @@ package db
 
 import (
 	"fmt"
-	"github.com/6156-DonaldDuck/comments/pkg/config"
-	"github.com/6156-DonaldDuck/comments/pkg/model"
+	"github.com/6156-DonaldDuck/articles/pkg/config"
+	"github.com/6156-DonaldDuck/articles/pkg/model"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -30,23 +30,22 @@ func init() {
 }
 
 func createTables() {
-	if !DbConn.Migrator().HasTable("comments") {
-		log.Infof("[db.createTables] table comments not found, creating new one\n")
-		if err := DbConn.Migrator().CreateTable(&model.Comment{}); err != nil {
-			log.Errorf("[db.createTables] error occurred while creating table comments, err=%v\n", err)
+	if !DbConn.Migrator().HasTable("articles") {
+		log.Infof("[db.createTables] table articles not found, creating new one\n")
+		if err := DbConn.Migrator().CreateTable(&model.Article{}); err != nil {
+			log.Errorf("[db.createTables] error occurred while creating table articles, err=%v\n", err)
 		}
 
 		// insert test data
-		testComment := model.Comment{
+		testArticle := model.Article{
 			Model: gorm.Model{
 				ID: 1,
 				CreatedAt: time.Now(),
 			},
-			ArticleId: 1,
 			AuthorId: 1,
 			Content: "test",
 		}
-		result := DbConn.Create(&testComment)
+		result := DbConn.Create(&testArticle)
 		if result.Error != nil {
 			log.Errorf("[db.createTables] error occurred while inserting test data, err=%v\n", result.Error)
 		} else {

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/6156-DonaldDuck/comments/pkg/router"
+	"github.com/6156-DonaldDuck/articles/pkg/router"
 )
 
 func main() {

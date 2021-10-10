@@ -1,4 +1,4 @@
-module github.com/6156-DonaldDuck/comments
+module github.com/6156-DonaldDuck/articles
 
 go 1.17
 

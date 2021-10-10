@@ -1,3 +1,3 @@
-# TwoPointThreeAcres.com/Comments
+# TwoPointThreeAcres.com/Articles
 
-This is the comments micro-service of the TwoPointThreeAcres.com project.
+This is the articles micro-service of the TwoPointThreeAcres.com project.
