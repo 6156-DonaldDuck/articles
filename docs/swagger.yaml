@@ -1,0 +1,48 @@
+info:
+  contact: {}
+paths:
+  /articles:
+    get:
+      consumes:
+      - application/json
+      description: List all articles
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: json
+        "500":
+          description: Internal Server Error
+          schema:
+            type: internal
+      summary: List All Articles
+      tags:
+      - Articles
+  /articles/:
+    get:
+      consumes:
+      - application/json
+      description: Get article by article id
+      parameters:
+      - description: the id of a specfic article
+        in: query
+        name: ID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: json
+        "400":
+          description: Bad Request
+          schema:
+            type: invalid
+      summary: Get Article By Article Id
+      tags:
+      - Articles
+swagger: "2.0"
