@@ -14,14 +14,19 @@ import (
 
 func InitRouter() {
 	r := gin.Default()
-	docs.SwaggerInfo.BasePath = ""
+	docs.SwaggerInfo.BasePath = config.Configuration.BaseURL
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	r.GET("/articles", ListAllArticles)
-	r.GET("/articles/:articleId", GetArticleByArticleId)
+
+	apiv1 := r.Group(config.Configuration.BaseURL)
+	{
+		apiv1.GET("/articles", ListAllArticles)
+		apiv1.GET("/articles/:articleId", GetArticleByArticleId)
+	}
+
 	r.Run(":" + config.Configuration.Port)
 }
 
-// @BasePath /
+// @BasePath /api/v1
 
 
 // @Summary List All Articles

@@ -7,8 +7,9 @@ import (
 )
 
 type Config struct {
-	Port string `yaml:"port"`
-	Mysql struct {
+	Port    string `yaml:"port"`
+	BaseURL string `yaml:"baseurl"`
+	Mysql   struct {
 		Host         string `yaml:"host"`
 		Port         string `yaml:"port"`
 		Username     string `yaml:"username"`
