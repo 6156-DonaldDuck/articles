@@ -1,4 +1,5 @@
 port: 8080
+baseurl: /api/v1
 mysql:
   host: e6156-db.c890fe3d965k.us-east-2.rds.amazonaws.com
   port: 3306
