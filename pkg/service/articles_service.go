@@ -28,7 +28,7 @@ func GetArticleByArticleId(articleId uint) (model.Article, error) {
 	return article, result.Error
 }
 
-func CreateArticle(article model.Article) (articleId uint) {
+func CreateArticle(article model.Article) (uint, error) {
 	result := db.DbConn.Create(&article)
 	if result.Error != nil {
 		log.Errorf("[service.CreateArticle] error occurred while creating article, err=%v\n", result.Error)
@@ -38,7 +38,7 @@ func CreateArticle(article model.Article) (articleId uint) {
 	return article.ID, result.Error
 }
 
-func UpdateArticle(updateInfo model.Article) (error){
+func UpdateArticle(updateInfo model.Article) error {
 	result := db.DbConn.Model(&updateInfo).Updates(updateInfo)
 	if result.Error != nil {
 		log.Errorf("[service.UpdateArticle] error occurred while updating article, err=%v\n", result.Error)
@@ -48,7 +48,7 @@ func UpdateArticle(updateInfo model.Article) (error){
 	return result.Error
 }
 
-func DeleteArticleById(articleId uint) (error) {
+func DeleteArticleById(articleId uint) error {
 	article := model.Article{}
 	result := db.DbConn.Delete(&article, articleId)
 	if result.Error != nil {

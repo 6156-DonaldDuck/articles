@@ -1,15 +1,17 @@
 package router
 
 import (
+	"net/http"
+	"strconv"
+
 	docs "github.com/6156-DonaldDuck/articles/docs"
 	"github.com/6156-DonaldDuck/articles/pkg/config"
+	"github.com/6156-DonaldDuck/articles/pkg/model"
 	"github.com/6156-DonaldDuck/articles/pkg/service"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"net/http"
-	"strconv"
 )
 
 func InitRouter() {
@@ -28,7 +30,6 @@ func InitRouter() {
 
 // @BasePath /api/v1
 
-
 // @Summary List All Articles
 // @Schemes
 // @Description List all articles
@@ -46,7 +47,6 @@ func ListAllArticles(c *gin.Context) {
 		c.JSON(http.StatusOK, articles)
 	}
 }
-
 
 // @Summary Get Article By Article Id
 // @Schemes
@@ -71,5 +71,85 @@ func GetArticleByArticleId(c *gin.Context) {
 		c.Error(err)
 	} else {
 		c.JSON(http.StatusOK, article)
+	}
+}
+
+// @Summary Create Article
+// @Schemes
+// @Description Create Article
+// @Tags Articles
+// @Accept json
+// @Produce json
+// @Param all attributes of a new article
+// @Success 200 {json} article id
+// @Failure 400 invalid article id
+// @Router /articles/ [post]
+func CreateArticle(c *gin.Context) {
+	article := model.Article{}
+	if err := c.ShouldBind(&article); err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	}
+	articleId, err := service.CreateArticle(article)
+	if err != nil {
+		c.Error(err)
+	} else {
+		c.JSON(http.StatusOK, articleId)
+	}
+}
+
+// @Summary Update Article By Article Id
+// @Schemes
+// @Description Update article by article id
+// @Tags Articles
+// @Accept json
+// @Produce json
+// @Param the id of a specfic article
+// @Success 200 {json} "update successfully"
+// @Failure 400 invalid article id
+// @Router /articles/ [put]
+func UpdateArticleById(c *gin.Context) {
+	idStr := c.Param("articleId")
+	articleId, err := strconv.Atoi(idStr)
+	if err != nil {
+		log.Errorf("[router.UpdateArticleById] failed to parse article id %v, err=%v\n", idStr, err)
+		c.JSON(http.StatusBadRequest, "invalid article id")
+		return
+	}
+	updateInfo := model.Article{}
+	if err := c.ShouldBind(&updateInfo); err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	}
+	updateInfo.ID = uint(articleId)
+	err = service.UpdateArticle(updateInfo)
+	if err != nil {
+		c.Error(err)
+	} else {
+		c.JSON(http.StatusOK, "update successfully")
+	}
+}
+
+// @Summary Delete Article By Article Id
+// @Schemes
+// @Description Delete article by article id
+// @Tags Articles
+// @Accept json
+// @Produce json
+// @Param the id of a specfic article
+// @Success 200 {json} "delete successfully"
+// @Failure 400 invalid article id
+// @Router /articles/ [get]
+func DeleteArticleById(c *gin.Context) {
+	idStr := c.Param("articleId")
+	articleId, err := strconv.Atoi(idStr)
+	if err != nil {
+		log.Errorf("[router.DeleteArticleById] failed to parse article id %v, err=%v\n", idStr, err)
+		c.JSON(http.StatusBadRequest, "invalid article id")
+		return
+	}
+	err = service.DeleteArticleById(uint(articleId))
+	if err != nil {
+		c.Error(err)
+	} else {
+		c.JSON(http.StatusOK, "Successfully delete article with id "+idStr)
 	}
 }
