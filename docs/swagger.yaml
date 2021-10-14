@@ -21,6 +21,30 @@ paths:
       tags:
       - Articles
   /articles/:
+    delete:
+      consumes:
+      - application/json
+      description: Delete article by article id
+      parameters:
+      - description: the id of a specfic article
+        in: query
+        name: ID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: json
+        "400":
+          description: Bad Request
+          schema:
+            type: invalid
+      summary: Delete Article By Article Id
+      tags:
+      - Articles
     get:
       consumes:
       - application/json
@@ -43,6 +67,62 @@ paths:
           schema:
             type: invalid
       summary: Get Article By Article Id
+      tags:
+      - Articles
+    post:
+      consumes:
+      - application/json
+      description: Create Article
+      parameters:
+      - description: Name
+        in: query
+        name: ID
+        required: true
+        type: string
+      - description: Title
+        in: query
+        name: title
+        type: integer
+      - description: Content
+        in: query
+        name: content
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: json
+        "400":
+          description: Bad Request
+          schema:
+            type: invalid
+      summary: Create Article
+      tags:
+      - Articles
+    put:
+      consumes:
+      - application/json
+      description: Update article by article id
+      parameters:
+      - description: the id of a specfic article
+        in: query
+        name: ID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: json
+        "400":
+          description: Bad Request
+          schema:
+            type: invalid
+      summary: Update Article By Article Id
       tags:
       - Articles
 swagger: "2.0"

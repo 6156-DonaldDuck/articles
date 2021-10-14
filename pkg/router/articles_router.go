@@ -23,6 +23,9 @@ func InitRouter() {
 	{
 		apiv1.GET("/articles", ListAllArticles)
 		apiv1.GET("/articles/:articleId", GetArticleByArticleId)
+		apiv1.POST( "/articles", CreateArticle)
+		apiv1.PUT( "/articles/:articleId", UpdateArticleById)
+		apiv1.DELETE( "/articles/:articleId", DeleteArticleById)
 	}
 
 	r.Run(":" + config.Configuration.Port)
@@ -80,7 +83,9 @@ func GetArticleByArticleId(c *gin.Context) {
 // @Tags Articles
 // @Accept json
 // @Produce json
-// @Param all attributes of a new article
+// @Param ID query string true "Name"
+// @Param title query int false "Title"
+// @Param content query int false "Content"
 // @Success 200 {json} article id
 // @Failure 400 invalid article id
 // @Router /articles/ [post]
@@ -103,8 +108,8 @@ func CreateArticle(c *gin.Context) {
 // @Tags Articles
 // @Accept json
 // @Produce json
-// @Param the id of a specfic article
-// @Success 200 {json} "update successfully"
+// @Param ID query int true "the id of a specfic article"
+// @Success 200 {json} update successfully
 // @Failure 400 invalid article id
 // @Router /articles/ [put]
 func UpdateArticleById(c *gin.Context) {
@@ -134,10 +139,10 @@ func UpdateArticleById(c *gin.Context) {
 // @Tags Articles
 // @Accept json
 // @Produce json
-// @Param the id of a specfic article
-// @Success 200 {json} "delete successfully"
+// @Param ID query int true "the id of a specfic article"
+// @Success 200 {json} delete successfully
 // @Failure 400 invalid article id
-// @Router /articles/ [get]
+// @Router /articles/ [delete]
 func DeleteArticleById(c *gin.Context) {
 	idStr := c.Param("articleId")
 	articleId, err := strconv.Atoi(idStr)
