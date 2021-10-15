@@ -53,78 +53,6 @@ var doc = `{
             }
         },
         "/articles/": {
-            "get": {
-                "description": "Get article by article id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Articles"
-                ],
-                "summary": "Get Article By Article Id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "the id of a specfic article",
-                        "name": "ID",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "json"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "invalid"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "Update article by article id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Articles"
-                ],
-                "summary": "Update Article By Article Id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "the id of a specfic article",
-                        "name": "ID",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "json"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "invalid"
-                        }
-                    }
-                }
-            },
             "post": {
                 "description": "Create Article",
                 "consumes": [
@@ -191,6 +119,80 @@ var doc = `{
                         "description": "the id of a specfic article",
                         "name": "ID",
                         "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "json"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "invalid"
+                        }
+                    }
+                }
+            }
+        },
+        "/articles/{articleId}": {
+            "get": {
+                "description": "Get article by article id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "Get Article By Article Id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "the id of a specfic article",
+                        "name": "ID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "json"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "invalid"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update article by article id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "Update Article By Article Id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "the id of a specfic article",
+                        "name": "ID",
+                        "in": "path",
                         "required": true
                     }
                 ],

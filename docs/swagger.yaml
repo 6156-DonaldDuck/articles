@@ -45,30 +45,6 @@ paths:
       summary: Delete Article By Article Id
       tags:
       - Articles
-    get:
-      consumes:
-      - application/json
-      description: Get article by article id
-      parameters:
-      - description: the id of a specfic article
-        in: query
-        name: ID
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: json
-        "400":
-          description: Bad Request
-          schema:
-            type: invalid
-      summary: Get Article By Article Id
-      tags:
-      - Articles
     post:
       consumes:
       - application/json
@@ -101,13 +77,38 @@ paths:
       summary: Create Article
       tags:
       - Articles
+  /articles/{articleId}:
+    get:
+      consumes:
+      - application/json
+      description: Get article by article id
+      parameters:
+      - description: the id of a specfic article
+        in: path
+        name: ID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: json
+        "400":
+          description: Bad Request
+          schema:
+            type: invalid
+      summary: Get Article By Article Id
+      tags:
+      - Articles
     put:
       consumes:
       - application/json
       description: Update article by article id
       parameters:
       - description: the id of a specfic article
-        in: query
+        in: path
         name: ID
         required: true
         type: integer
