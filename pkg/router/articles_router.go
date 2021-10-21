@@ -60,7 +60,7 @@ func ListAllArticles(c *gin.Context) {
 // @Param ID path int true "the id of a specfic article"
 // @Success 200 {json} article
 // @Failure 400 invalid article id
-// @Router /articles/{articleId} [get]
+// @Router /articles/{ID} [get]
 func GetArticleByArticleId(c *gin.Context) {
 	articleIdStr := c.Param("articleId")
 	articleId, err := strconv.Atoi(articleIdStr)
@@ -83,13 +83,12 @@ func GetArticleByArticleId(c *gin.Context) {
 // @Tags Articles
 // @Accept json
 // @Produce json
-// @Param ID formData int true "the id of a specfic article"
 // @Param title formData string false "Title"
 // @Param content formData string false "Content"
 // @Param kind formData string false "Kind"
-// @Success 200 {json} article id
+// @Success 200 {json} article ids
 // @Failure 400 invalid article id
-// @Router /articles/{articleId} [post]
+// @Router /articles/ [post]
 func CreateArticle(c *gin.Context) {
 	article := model.Article{}
 	if err := c.ShouldBind(&article); err != nil {
@@ -112,7 +111,7 @@ func CreateArticle(c *gin.Context) {
 // @Param ID path int true "the id of a specfic article"
 // @Success 200 {json} update successfully
 // @Failure 400 invalid article id
-// @Router /articles/{articleId} [put]
+// @Router /articles/{ID} [put]
 func UpdateArticleById(c *gin.Context) {
 	idStr := c.Param("articleId")
 	articleId, err := strconv.Atoi(idStr)
@@ -143,7 +142,7 @@ func UpdateArticleById(c *gin.Context) {
 // @Param ID header int true "the id of a specfic article"
 // @Success 200 {json} delete successfully
 // @Failure 400 invalid article id
-// @Router /articles/ [delete]
+// @Router /articles/{ID} [delete]
 func DeleteArticleById(c *gin.Context) {
 	idStr := c.Param("articleId")
 	articleId, err := strconv.Atoi(idStr)

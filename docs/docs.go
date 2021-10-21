@@ -53,13 +53,8 @@ var doc = `{
             }
         },
         "/articles/": {
-<<<<<<< HEAD
-            "put": {
-                "description": "Update article by article id",
-=======
             "post": {
                 "description": "Create Article",
->>>>>>> 6778cc67431e421cdce3ed0a25ea8627856b2951
                 "consumes": [
                     "application/json"
                 ],
@@ -69,66 +64,25 @@ var doc = `{
                 "tags": [
                     "Articles"
                 ],
-<<<<<<< HEAD
-                "summary": "Update Article By Article Id",
-=======
                 "summary": "Create Article",
->>>>>>> 6778cc67431e421cdce3ed0a25ea8627856b2951
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Name",
-                        "name": "ID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
                         "description": "Title",
                         "name": "title",
-                        "in": "query"
+                        "in": "formData"
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Content",
                         "name": "content",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "json"
-                        }
+                        "in": "formData"
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "invalid"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete article by article id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Articles"
-                ],
-                "summary": "Delete Article By Article Id",
-                "parameters": [
                     {
-                        "type": "integer",
-                        "description": "the id of a specfic article",
-                        "name": "ID",
-                        "in": "header",
-                        "required": true
+                        "type": "string",
+                        "description": "Kind",
+                        "name": "kind",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -147,7 +101,7 @@ var doc = `{
                 }
             }
         },
-        "/articles/{articleId}": {
+        "/articles/{ID}": {
             "get": {
                 "description": "Get article by article id",
                 "consumes": [
@@ -184,13 +138,8 @@ var doc = `{
                     }
                 }
             },
-<<<<<<< HEAD
-            "post": {
-                "description": "Create Article",
-=======
             "put": {
                 "description": "Update article by article id",
->>>>>>> 6778cc67431e421cdce3ed0a25ea8627856b2951
                 "consumes": [
                     "application/json"
                 ],
@@ -200,40 +149,50 @@ var doc = `{
                 "tags": [
                     "Articles"
                 ],
-<<<<<<< HEAD
-                "summary": "Create Article",
-=======
                 "summary": "Update Article By Article Id",
->>>>>>> 6778cc67431e421cdce3ed0a25ea8627856b2951
                 "parameters": [
                     {
                         "type": "integer",
                         "description": "the id of a specfic article",
                         "name": "ID",
-<<<<<<< HEAD
-                        "in": "formData",
-=======
                         "in": "path",
->>>>>>> 6778cc67431e421cdce3ed0a25ea8627856b2951
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "json"
+                        }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "invalid"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete article by article id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "Delete Article By Article Id",
+                "parameters": [
                     {
-                        "type": "string",
-                        "description": "Title",
-                        "name": "title",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Content",
-                        "name": "content",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Kind",
-                        "name": "kind",
-                        "in": "formData"
+                        "type": "integer",
+                        "description": "the id of a specfic article",
+                        "name": "ID",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
