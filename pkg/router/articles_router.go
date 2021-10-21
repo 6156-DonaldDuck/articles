@@ -8,6 +8,7 @@ import (
 	"github.com/6156-DonaldDuck/articles/pkg/config"
 	"github.com/6156-DonaldDuck/articles/pkg/model"
 	"github.com/6156-DonaldDuck/articles/pkg/service"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
@@ -16,6 +17,7 @@ import (
 
 func InitRouter() {
 	r := gin.Default()
+	r.Use(cors.Default())
 	docs.SwaggerInfo.BasePath = config.Configuration.BaseURL
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

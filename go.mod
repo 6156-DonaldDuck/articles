@@ -3,6 +3,7 @@ module github.com/6156-DonaldDuck/articles
 go 1.17
 
 require (
+	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.4
 	github.com/sirupsen/logrus v1.8.1
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
