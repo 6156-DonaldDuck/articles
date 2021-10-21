@@ -53,8 +53,13 @@ var doc = `{
             }
         },
         "/articles/": {
+<<<<<<< HEAD
             "put": {
                 "description": "Update article by article id",
+=======
+            "post": {
+                "description": "Create Article",
+>>>>>>> 6778cc67431e421cdce3ed0a25ea8627856b2951
                 "consumes": [
                     "application/json"
                 ],
@@ -64,14 +69,30 @@ var doc = `{
                 "tags": [
                     "Articles"
                 ],
+<<<<<<< HEAD
                 "summary": "Update Article By Article Id",
+=======
+                "summary": "Create Article",
+>>>>>>> 6778cc67431e421cdce3ed0a25ea8627856b2951
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "the id of a specfic article",
+                        "type": "string",
+                        "description": "Name",
                         "name": "ID",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Title",
+                        "name": "title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Content",
+                        "name": "content",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -163,8 +184,13 @@ var doc = `{
                     }
                 }
             },
+<<<<<<< HEAD
             "post": {
                 "description": "Create Article",
+=======
+            "put": {
+                "description": "Update article by article id",
+>>>>>>> 6778cc67431e421cdce3ed0a25ea8627856b2951
                 "consumes": [
                     "application/json"
                 ],
@@ -174,13 +200,21 @@ var doc = `{
                 "tags": [
                     "Articles"
                 ],
+<<<<<<< HEAD
                 "summary": "Create Article",
+=======
+                "summary": "Update Article By Article Id",
+>>>>>>> 6778cc67431e421cdce3ed0a25ea8627856b2951
                 "parameters": [
                     {
                         "type": "integer",
                         "description": "the id of a specfic article",
                         "name": "ID",
+<<<<<<< HEAD
                         "in": "formData",
+=======
+                        "in": "path",
+>>>>>>> 6778cc67431e421cdce3ed0a25ea8627856b2951
                         "required": true
                     },
                     {
