@@ -27,7 +27,7 @@ paths:
       description: Delete article by article id
       parameters:
       - description: the id of a specfic article
-        in: query
+        in: header
         name: ID
         required: true
         type: integer
@@ -45,13 +45,38 @@ paths:
       summary: Delete Article By Article Id
       tags:
       - Articles
+    put:
+      consumes:
+      - application/json
+      description: Update article by article id
+      parameters:
+      - description: the id of a specfic article
+        in: path
+        name: ID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: json
+        "400":
+          description: Bad Request
+          schema:
+            type: invalid
+      summary: Update Article By Article Id
+      tags:
+      - Articles
+  /articles/{articleId}:
     get:
       consumes:
       - application/json
       description: Get article by article id
       parameters:
       - description: the id of a specfic article
-        in: query
+        in: path
         name: ID
         required: true
         type: integer
@@ -74,19 +99,23 @@ paths:
       - application/json
       description: Create Article
       parameters:
-      - description: Name
-        in: query
+      - description: the id of a specfic article
+        in: formData
         name: ID
         required: true
-        type: string
+        type: integer
       - description: Title
-        in: query
+        in: formData
         name: title
-        type: integer
+        type: string
       - description: Content
-        in: query
+        in: formData
         name: content
-        type: integer
+        type: string
+      - description: Kind
+        in: formData
+        name: kind
+        type: string
       produces:
       - application/json
       responses:
@@ -99,30 +128,6 @@ paths:
           schema:
             type: invalid
       summary: Create Article
-      tags:
-      - Articles
-    put:
-      consumes:
-      - application/json
-      description: Update article by article id
-      parameters:
-      - description: the id of a specfic article
-        in: query
-        name: ID
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: json
-        "400":
-          description: Bad Request
-          schema:
-            type: invalid
-      summary: Update Article By Article Id
       tags:
       - Articles
 swagger: "2.0"

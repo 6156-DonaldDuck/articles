@@ -23,9 +23,9 @@ func InitRouter() {
 	{
 		apiv1.GET("/articles", ListAllArticles)
 		apiv1.GET("/articles/:articleId", GetArticleByArticleId)
-		apiv1.POST( "/articles", CreateArticle)
-		apiv1.PUT( "/articles/:articleId", UpdateArticleById)
-		apiv1.DELETE( "/articles/:articleId", DeleteArticleById)
+		apiv1.POST("/articles", CreateArticle)
+		apiv1.PUT("/articles/:articleId", UpdateArticleById)
+		apiv1.DELETE("/articles/:articleId", DeleteArticleById)
 	}
 
 	r.Run(":" + config.Configuration.Port)
@@ -57,10 +57,10 @@ func ListAllArticles(c *gin.Context) {
 // @Tags Articles
 // @Accept json
 // @Produce json
-// @Param ID query int true "the id of a specfic article"
+// @Param ID path int true "the id of a specfic article"
 // @Success 200 {json} article
 // @Failure 400 invalid article id
-// @Router /articles/ [get]
+// @Router /articles/{articleId} [get]
 func GetArticleByArticleId(c *gin.Context) {
 	articleIdStr := c.Param("articleId")
 	articleId, err := strconv.Atoi(articleIdStr)
@@ -83,12 +83,13 @@ func GetArticleByArticleId(c *gin.Context) {
 // @Tags Articles
 // @Accept json
 // @Produce json
-// @Param ID query string true "Name"
-// @Param title query int false "Title"
-// @Param content query int false "Content"
+// @Param ID formData int true "the id of a specfic article"
+// @Param title formData string false "Title"
+// @Param content formData string false "Content"
+// @Param kind formData string false "Kind"
 // @Success 200 {json} article id
 // @Failure 400 invalid article id
-// @Router /articles/ [post]
+// @Router /articles/{articleId} [post]
 func CreateArticle(c *gin.Context) {
 	article := model.Article{}
 	if err := c.ShouldBind(&article); err != nil {
@@ -108,7 +109,7 @@ func CreateArticle(c *gin.Context) {
 // @Tags Articles
 // @Accept json
 // @Produce json
-// @Param ID query int true "the id of a specfic article"
+// @Param ID path int true "the id of a specfic article"
 // @Success 200 {json} update successfully
 // @Failure 400 invalid article id
 // @Router /articles/ [put]
@@ -139,7 +140,7 @@ func UpdateArticleById(c *gin.Context) {
 // @Tags Articles
 // @Accept json
 // @Produce json
-// @Param ID query int true "the id of a specfic article"
+// @Param ID header int true "the id of a specfic article"
 // @Success 200 {json} delete successfully
 // @Failure 400 invalid article id
 // @Router /articles/ [delete]
