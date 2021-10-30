@@ -1,23 +1,25 @@
 package router
 
 import (
-	"net/http"
-	"strconv"
-
 	docs "github.com/6156-DonaldDuck/articles/docs"
 	"github.com/6156-DonaldDuck/articles/pkg/config"
 	"github.com/6156-DonaldDuck/articles/pkg/model"
+	"github.com/6156-DonaldDuck/articles/pkg/router/middleware"
 	"github.com/6156-DonaldDuck/articles/pkg/service"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"net/http"
+	"strconv"
 )
 
 func InitRouter() {
 	r := gin.Default()
 	r.Use(cors.Default())
+	r.Use(middleware.Notification())
+
 	docs.SwaggerInfo.BasePath = config.Configuration.BaseURL
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

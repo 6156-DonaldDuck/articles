@@ -16,6 +16,14 @@ type Config struct {
 		Password     string `yaml:"password"`
 		DatabaseName string `yaml:"dbname"`
 	}
+	SNS     struct {
+		Region         string `yaml:"region"`
+		TopicArn       string `yaml:"topicArn"`
+	}
+	AWS     struct{
+		PublicKey string `yaml:"publicKey"`
+		SecretKey string `yaml:"secretKey"`
+	}
 }
 
 var Configuration Config

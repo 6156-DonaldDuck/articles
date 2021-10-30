@@ -6,3 +6,9 @@ mysql:
   username: dbuser
   password: dbuserdbuser
   dbname: hw1
+sns:
+  region: us-east-2
+  topicArn: arn:aws:sns:us-east-2:967961276452:ArticleNotification
+aws:
+  publicKey: AKIA6CXX46ASJKZKNXFC
+  secretKey: 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
