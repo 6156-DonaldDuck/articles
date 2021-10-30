@@ -18,6 +18,7 @@ import (
 func InitRouter() {
 	r := gin.Default()
 	r.Use(cors.Default())
+	r.Use(middleware.Security())
 	r.Use(middleware.Notification())
 
 	docs.SwaggerInfo.BasePath = config.Configuration.BaseURL
