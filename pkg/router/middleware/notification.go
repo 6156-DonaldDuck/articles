@@ -12,7 +12,7 @@ import (
 )
 
 
-
+// Initialize aws sns service and publish a message
 func publishSNS(subject string, message string) (*request.Request, *sns.PublishOutput, error){
 
 	// Initial credentials loaded from SDK's default credential chain. Such as
@@ -43,6 +43,8 @@ func publishSNS(subject string, message string) (*request.Request, *sns.PublishO
 // New article notification middleware
 func Notification() gin.HandlerFunc {
 	return func (c *gin.Context) {
+		c.Next()
+		// send SNS after request
 		requestMap := map[string] string {"/api/v1/articles": "POST"}
 		method, ok := requestMap[c.Request.RequestURI]
 		if ok && method == c.Request.Method {
@@ -56,4 +58,7 @@ func Notification() gin.HandlerFunc {
 			}
 		}
 	}
+
 }
+
+

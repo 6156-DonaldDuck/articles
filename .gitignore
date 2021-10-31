@@ -148,3 +148,6 @@ Temporary Items
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+# ignore config file
+conf.yaml
