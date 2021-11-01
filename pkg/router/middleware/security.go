@@ -20,7 +20,7 @@ func Security() gin.HandlerFunc {
 
 		// Figure out whether current request is in white list.
 		allowed := false
-		allowedMethods, ok := whiteListMap[c.Request.RequestURI]
+		allowedMethods, ok := whiteListMap[c.FullPath()]
 		if ok {
 			for _, method := range allowedMethods {
 				if method == c.Request.Method {

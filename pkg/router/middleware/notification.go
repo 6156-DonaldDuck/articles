@@ -46,7 +46,7 @@ func Notification() gin.HandlerFunc {
 		c.Next()
 		// send SNS after request
 		requestMap := map[string] string {"/api/v1/articles": "POST"}
-		method, ok := requestMap[c.Request.RequestURI]
+		method, ok := requestMap[c.FullPath()]
 		if ok && method == c.Request.Method {
 			subject := "New Article Created!"
 			message := "New Article Created!"
