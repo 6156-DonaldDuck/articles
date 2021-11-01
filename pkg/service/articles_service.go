@@ -4,11 +4,17 @@ import (
 	"github.com/6156-DonaldDuck/articles/pkg/db"
 	"github.com/6156-DonaldDuck/articles/pkg/model"
 	log "github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
-func ListAllArticles() ([]model.Article, error) {
+func ListAllArticles(offset int, limit int, authorId uint) ([]model.Article, error) {
 	var articles []model.Article
-	result := db.DbConn.Find(&articles)
+	var result *gorm.DB
+	if authorId == 0{
+		result = db.DbConn.Limit(limit).Offset(offset).Find(&articles)
+	} else{
+		result = db.DbConn.Where("author_id = ?", authorId).Limit(limit).Offset(offset).Find(&articles)
+	}
 	if result.Error != nil {
 		log.Errorf("[service.ListAllArticles] error occurred while listing articles, err=%v\n", result.Error)
 	} else {

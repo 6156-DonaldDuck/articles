@@ -1,6 +1,7 @@
 package router
 
 import (
+	"errors"
 	docs "github.com/6156-DonaldDuck/articles/docs"
 	"github.com/6156-DonaldDuck/articles/pkg/config"
 	"github.com/6156-DonaldDuck/articles/pkg/model"
@@ -11,6 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 )
@@ -48,7 +50,35 @@ func InitRouter() {
 // @Failure 500 internal server error
 // @Router /articles [get]
 func ListAllArticles(c *gin.Context) {
-	articles, err := service.ListAllArticles()
+	pageSizeStr := c.Query("page_size")
+	pageStr := c.Query("page")
+	authorIdStr := c.Query("author_id")
+	var authorId int
+	if authorIdStr == ""{
+		authorId = 0
+	} else{
+		var errAuthorId error
+		authorId, errAuthorId = strconv.Atoi(authorIdStr)
+		if errAuthorId != nil {
+			log.Errorf("[router.ListAllArticles] failed to parse authorId %v, err=%v\n", authorIdStr, errAuthorId)
+			c.JSON(http.StatusBadRequest, "invalid authorId")
+			return
+		}
+	}
+	pageSize, errPageSize := strconv.Atoi(pageSizeStr)
+	page, errPage := strconv.Atoi(pageStr)
+	if errPageSize != nil {
+		log.Errorf("[router.ListAllArticles] failed to parse page size %v, err=%v\n", pageSizeStr, errPageSize)
+		c.JSON(http.StatusBadRequest, "invalid page size")
+		return
+	}
+	if errPage != nil {
+		log.Errorf("[router.ListAllArticles] failed to parse page %v, err=%v\n", pageStr, errPage)
+		c.JSON(http.StatusBadRequest, "invalid page")
+		return
+	}
+
+	articles, err := service.ListAllArticles((page-1)*pageSize, pageSize, uint(authorId))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "internal server error")
 	} else {
@@ -76,8 +106,12 @@ func GetArticleByArticleId(c *gin.Context) {
 	}
 	article, err := service.GetArticleByArticleId(uint(articleId))
 	if err != nil {
-		c.Error(err)
-	} else {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, err.Error())
+		} else {
+			c.Error(err)
+		}
+	} else{
 		c.JSON(http.StatusOK, article)
 	}
 }
@@ -99,11 +133,17 @@ func CreateArticle(c *gin.Context) {
 	if err := c.ShouldBind(&article); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 	}
+	if article.ID != 0{
+		_, err := service.GetArticleByArticleId(article.ID)
+		if err == nil {
+			c.JSON(http.StatusUnprocessableEntity, "Duplicate key")
+		}
+	}
 	articleId, err := service.CreateArticle(article)
 	if err != nil {
 		c.Error(err)
 	} else {
-		c.JSON(http.StatusOK, articleId)
+		c.JSON(http.StatusCreated, articleId)
 	}
 }
 
@@ -160,6 +200,6 @@ func DeleteArticleById(c *gin.Context) {
 	if err != nil {
 		c.Error(err)
 	} else {
-		c.JSON(http.StatusOK, "Successfully delete article with id "+idStr)
+		c.JSON(http.StatusNoContent, "Successfully delete article with id "+idStr)
 	}
 }
