@@ -15,7 +15,7 @@ func Security() gin.HandlerFunc {
 		whiteListMap := map[string] []string {
 			"/swagger/*any": {"GET"},
 			"/api/v1/articles": {"GET", "POST"},
-			"/api/v1/articles/:articleId": {"GET","PUT"},
+			"/api/v1/articles/:articleId": {"GET", "PUT", "DELETE"},
 		}
 
 		// Figure out whether current request is in white list.
