@@ -9,5 +9,5 @@ type Article struct {
 	AuthorId uint `json:"author_id"`
 	Title string `json:"title"`
 	Content string `json:"content"`
-	Kind string `json:"kind"`
+	SectionId uint `json:"section_id"`
 }

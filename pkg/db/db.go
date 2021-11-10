@@ -42,8 +42,10 @@ func createTables() {
 				ID: 1,
 				CreatedAt: time.Now(),
 			},
+			Title: "test article title",
 			AuthorId: 1,
-			Content: "test",
+			Content: "test article content",
+			SectionId: 1,
 		}
 		result := DbConn.Create(&testArticle)
 		if result.Error != nil {
