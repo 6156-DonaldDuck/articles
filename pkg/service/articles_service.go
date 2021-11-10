@@ -7,20 +7,24 @@ import (
 	"gorm.io/gorm"
 )
 
-func ListAllArticles(offset int, limit int, authorId uint) ([]model.Article, error) {
+func ListAllArticles(offset int, limit int, authorId uint) ([]model.Article, int, error) {
 	var articles []model.Article
+	var totalCount int64
 	var result *gorm.DB
-	if authorId == 0{
-		result = db.DbConn.Limit(limit).Offset(offset).Find(&articles)
-	} else{
-		result = db.DbConn.Where("author_id = ?", authorId).Limit(limit).Offset(offset).Find(&articles)
+	dbConn := db.DbConn.Limit(limit).Offset(offset)
+	if authorId == 0 {
+		result = dbConn.Find(&articles)
+		db.DbConn.Model(&model.Article{}).Count(&totalCount)
+	} else {
+		result = dbConn.Where("author_id = ?", authorId).Find(&articles)
+		db.DbConn.Model(&model.Article{}).Where("author_id = ?", authorId).Count(&totalCount)
 	}
 	if result.Error != nil {
 		log.Errorf("[service.ListAllArticles] error occurred while listing articles, err=%v\n", result.Error)
 	} else {
 		log.Infof("[service.ListAllArticles] successfully listed articles, rows affected = %v\n", result.RowsAffected)
 	}
-	return articles, result.Error
+	return articles, int(totalCount), result.Error
 }
 
 func GetArticleByArticleId(articleId uint) (model.Article, error) {

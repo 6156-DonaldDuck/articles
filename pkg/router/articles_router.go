@@ -50,21 +50,17 @@ func InitRouter() {
 // @Failure 500 internal server error
 // @Router /articles [get]
 func ListAllArticles(c *gin.Context) {
-	pageSizeStr := c.Query("page_size")
-	pageStr := c.Query("page")
-	authorIdStr := c.Query("author_id")
-	var authorId int
-	if authorIdStr == ""{
-		authorId = 0
-	} else{
-		var errAuthorId error
-		authorId, errAuthorId = strconv.Atoi(authorIdStr)
-		if errAuthorId != nil {
-			log.Errorf("[router.ListAllArticles] failed to parse authorId %v, err=%v\n", authorIdStr, errAuthorId)
-			c.JSON(http.StatusBadRequest, "invalid authorId")
-			return
-		}
+	pageSizeStr := c.DefaultQuery("page_size", "10")
+	pageStr := c.DefaultQuery("page", "1")
+	authorIdStr := c.DefaultQuery("author_id", "0")
+
+	authorId, err := strconv.Atoi(authorIdStr)
+	if err != nil {
+		log.Errorf("[router.ListAllArticles] failed to parse authorId %v, err=%v\n", authorIdStr, err)
+		c.JSON(http.StatusBadRequest, "invalid authorId")
+		return
 	}
+
 	pageSize, errPageSize := strconv.Atoi(pageSizeStr)
 	page, errPage := strconv.Atoi(pageStr)
 	if errPageSize != nil {
@@ -78,11 +74,16 @@ func ListAllArticles(c *gin.Context) {
 		return
 	}
 
-	articles, err := service.ListAllArticles((page-1)*pageSize, pageSize, uint(authorId))
+	articles, total, err := service.ListAllArticles((page - 1) * pageSize, pageSize, uint(authorId))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "internal server error")
 	} else {
-		c.JSON(http.StatusOK, articles)
+		c.JSON(http.StatusOK, model.ListArticlesResponse{
+			Articles: articles,
+			Total: total,
+			Page: page,
+			PageSize: pageSize,
+		})
 	}
 }
 
@@ -133,7 +134,7 @@ func CreateArticle(c *gin.Context) {
 	if err := c.ShouldBind(&article); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 	}
-	if article.ID != 0{
+	if article.ID != 0 {
 		_, err := service.GetArticleByArticleId(article.ID)
 		if err == nil {
 			c.JSON(http.StatusUnprocessableEntity, "Duplicate key")
@@ -200,6 +201,6 @@ func DeleteArticleById(c *gin.Context) {
 	if err != nil {
 		c.Error(err)
 	} else {
-		c.JSON(http.StatusNoContent, "Successfully delete article with id "+idStr)
+		c.JSON(http.StatusNoContent, "Successfully delete article with id "+ idStr)
 	}
 }
