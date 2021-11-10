@@ -7,23 +7,34 @@ import (
 	"gorm.io/gorm"
 )
 
-func ListAllArticles(offset int, limit int, authorId uint) ([]model.Article, int, error) {
+func ListAllArticles(offset int, limit int, authorId uint, sectionId uint) ([]model.Article, int, error) {
 	var articles []model.Article
 	var totalCount int64
 	var result *gorm.DB
-	dbConn := db.DbConn.Limit(limit).Offset(offset)
-	if authorId == 0 {
-		result = dbConn.Find(&articles)
-		db.DbConn.Model(&model.Article{}).Count(&totalCount)
-	} else {
-		result = dbConn.Where("author_id = ?", authorId).Find(&articles)
-		db.DbConn.Model(&model.Article{}).Where("author_id = ?", authorId).Count(&totalCount)
+	resultDbConn := db.DbConn.Limit(limit).Offset(offset)
+	countDbConn := db.DbConn.Model(&model.Article{})
+
+	// filter by author id
+	if authorId != 0 {
+		resultDbConn = resultDbConn.Where("author_id = ?", authorId)
+		countDbConn = countDbConn.Where("author_id = ?", authorId)
 	}
+
+	// filter by sectionId
+	if sectionId != 0 {
+		resultDbConn = resultDbConn.Where("section_id = ?", sectionId)
+		countDbConn = countDbConn.Where("section_id = ?", sectionId)
+	}
+
+	// retrieve result article list and count
+	result = resultDbConn.Find(&articles)
 	if result.Error != nil {
 		log.Errorf("[service.ListAllArticles] error occurred while listing articles, err=%v\n", result.Error)
 	} else {
 		log.Infof("[service.ListAllArticles] successfully listed articles, rows affected = %v\n", result.RowsAffected)
 	}
+	countDbConn.Count(&totalCount)
+
 	return articles, int(totalCount), result.Error
 }
 

@@ -53,11 +53,18 @@ func ListAllArticles(c *gin.Context) {
 	pageSizeStr := c.DefaultQuery("page_size", "10")
 	pageStr := c.DefaultQuery("page", "1")
 	authorIdStr := c.DefaultQuery("author_id", "0")
+	sectionIdStr := c.DefaultQuery("section_id", "0")
 
 	authorId, err := strconv.Atoi(authorIdStr)
 	if err != nil {
 		log.Errorf("[router.ListAllArticles] failed to parse authorId %v, err=%v\n", authorIdStr, err)
 		c.JSON(http.StatusBadRequest, "invalid authorId")
+		return
+	}
+	sectionId, err := strconv.Atoi(sectionIdStr)
+	if err != nil {
+		log.Errorf("[router.ListAllArticles] failed to parse sectionId %v, err=%v\n", sectionIdStr, err)
+		c.JSON(http.StatusBadRequest, "invalid sectionId")
 		return
 	}
 
@@ -74,7 +81,7 @@ func ListAllArticles(c *gin.Context) {
 		return
 	}
 
-	articles, total, err := service.ListAllArticles((page - 1) * pageSize, pageSize, uint(authorId))
+	articles, total, err := service.ListAllArticles((page - 1) * pageSize, pageSize, uint(authorId), uint(sectionId))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "internal server error")
 	} else {
