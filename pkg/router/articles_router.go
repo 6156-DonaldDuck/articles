@@ -7,7 +7,6 @@ import (
 	"github.com/6156-DonaldDuck/articles/pkg/model"
 	"github.com/6156-DonaldDuck/articles/pkg/router/middleware"
 	"github.com/6156-DonaldDuck/articles/pkg/service"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
@@ -19,7 +18,7 @@ import (
 
 func InitRouter() {
 	r := gin.Default()
-	r.Use(cors.Default())
+	r.Use(middleware.CORSMiddleware()) // use customized cors middleware
 	r.Use(middleware.Security())
 	r.Use(middleware.Notification())
 
