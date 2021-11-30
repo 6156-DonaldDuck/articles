@@ -3,7 +3,7 @@ module github.com/6156-DonaldDuck/articles
 go 1.17
 
 require (
-	github.com/aws/aws-sdk-go v1.41.14
+	github.com/aws/aws-sdk-go v1.42.14
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.4
 	github.com/sirupsen/logrus v1.8.1
