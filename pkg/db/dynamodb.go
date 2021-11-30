@@ -7,18 +7,12 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/6156-DonaldDuck/articles/pkg/config"
+	"github.com/6156-DonaldDuck/articles/pkg/model"
     "fmt"
     "log"
 )
 
 var DynamoDBConn *dynamodb.DynamoDB
-
-type DynamoArticle struct {
-	Title string
-	AuthorId uint
-	Content string
-	SectionId uint
-}
 
 func init() {
 	tableName := "Articles"
@@ -83,7 +77,7 @@ func createTable(tableName string) {
 }
 
 func insertTestItem(tableName string) {
-	testArticle := DynamoArticle{
+	testArticle := model.DArticle{
 		AuthorId: 1,
 		Title: "test article title",
 		Content: "test article content",

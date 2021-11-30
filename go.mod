@@ -18,6 +18,11 @@ require (
 require (
 	github.com/PuerkitoBio/purell v1.1.0 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.4.3 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.3.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.9.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.8.0 // indirect
+	github.com/aws/smithy-go v1.9.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-openapi/jsonpointer v0.17.0 // indirect
 	github.com/go-openapi/jsonreference v0.19.0 // indirect

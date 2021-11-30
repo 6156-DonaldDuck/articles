@@ -6,3 +6,7 @@ type ListArticlesResponse struct {
 	Page int `json:"page"`
 	PageSize int `json:"page_size"`
 }
+
+type ListArticlesResponseD struct {
+	Articles []DArticle `json:"articles"`
+}

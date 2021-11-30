@@ -11,3 +11,10 @@ type Article struct {
 	Content string `json:"content"`
 	SectionId uint `json:"section_id"`
 }
+
+type DArticle struct {
+	AuthorId uint
+	Title string 
+	Content string
+	SectionId uint
+}

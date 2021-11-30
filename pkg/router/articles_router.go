@@ -32,6 +32,12 @@ func InitRouter() {
 		apiv1.POST("/articles", CreateArticle)
 		apiv1.PUT("/articles/:articleId", UpdateArticleById)
 		apiv1.DELETE("/articles/:articleId", DeleteArticleById)
+
+		apiv1.GET("/dynamo/articles", ListAllArticlesDynamo)
+		apiv1.GET("/dynamo/articles/:authorId", GetArticleByAuthorIdDynamo)		
+		apiv1.POST("/dynamo/articles", CreateArticleDynamo)
+		// apiv1.PUT("/articles/:articleId", UpdateArticleById)
+		// apiv1.DELETE("/articles/:articleId", DeleteArticleById)
 	}
 
 	r.Run(":" + config.Configuration.Port)
@@ -208,5 +214,45 @@ func DeleteArticleById(c *gin.Context) {
 		c.Error(err)
 	} else {
 		c.JSON(http.StatusNoContent, "Successfully delete article with id "+ idStr)
+	}
+}
+
+func ListAllArticlesDynamo(c *gin.Context) {	
+	articles, err := service.ListAllArticlesDynamo()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, "internal server error")
+	} else {
+		c.JSON(http.StatusOK, model.ListArticlesResponseD{
+			Articles: articles,
+		})
+	}
+}
+
+func GetArticleByAuthorIdDynamo(c *gin.Context) {
+	authorIdStr := c.Param("authorId")
+	authorId, err := strconv.Atoi(authorIdStr)
+	if err != nil {
+		log.Errorf("[router.GetArticleByAuthorIdDynamo] failed to parse author id %v, err=%v\n", authorIdStr, err)
+		c.JSON(http.StatusBadRequest, "invalid author id")
+		return
+	}
+	articles, err := service.GetArticleByAuthorIdDynamo(uint(authorId))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, "internal server error")
+	} else {
+		c.JSON(http.StatusOK, articles)
+	}
+}
+
+func CreateArticleDynamo(c *gin.Context) {
+	article := model.DArticle{}
+	if err := c.ShouldBind(&article); err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	}
+	title, err := service.CreateArticleDynamo(article)
+	if err != nil {
+		c.Error(err)
+	} else {
+		c.JSON(http.StatusCreated, title)
 	}
 }
