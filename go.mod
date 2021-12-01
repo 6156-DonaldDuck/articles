@@ -3,7 +3,7 @@ module github.com/6156-DonaldDuck/articles
 go 1.17
 
 require (
-	github.com/aws/aws-sdk-go v1.41.14
+	github.com/aws/aws-sdk-go v1.42.14
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.4
 	github.com/sirupsen/logrus v1.8.1
@@ -18,6 +18,11 @@ require (
 require (
 	github.com/PuerkitoBio/purell v1.1.0 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.4.3 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.3.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.9.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.8.0 // indirect
+	github.com/aws/smithy-go v1.9.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-openapi/jsonpointer v0.17.0 // indirect
 	github.com/go-openapi/jsonreference v0.19.0 // indirect

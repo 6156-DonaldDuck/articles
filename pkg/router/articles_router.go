@@ -2,6 +2,8 @@ package router
 
 import (
 	"errors"
+	"net/http"
+	"strconv"
 	docs "github.com/6156-DonaldDuck/articles/docs"
 	"github.com/6156-DonaldDuck/articles/pkg/config"
 	"github.com/6156-DonaldDuck/articles/pkg/model"
@@ -12,8 +14,6 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
-	"net/http"
-	"strconv"
 )
 
 func InitRouter() {
@@ -32,6 +32,13 @@ func InitRouter() {
 		apiv1.POST("/articles", CreateArticle)
 		apiv1.PUT("/articles/:articleId", UpdateArticleById)
 		apiv1.DELETE("/articles/:articleId", DeleteArticleById)
+
+		apiv1.GET("/dynamo/articles", ListAllArticlesDynamo)
+		apiv1.GET("/dynamo/articles/:authorId", GetArticleByAuthorIdDynamo)
+		apiv1.POST("/dynamo/articles", CreateArticleDynamo)
+		apiv1.PUT("/dynamo/articles", UpdateArticleDynamo)
+		apiv1.DELETE("/dynamo/articles", DeleteArticleDynamo)
+		apiv1.POST("/test/articles", TestTransactionConflict)
 	}
 
 	r.Run(":" + config.Configuration.Port)
@@ -80,14 +87,14 @@ func ListAllArticles(c *gin.Context) {
 		return
 	}
 
-	articles, total, err := service.ListAllArticles((page - 1) * pageSize, pageSize, uint(authorId), uint(sectionId))
+	articles, total, err := service.ListAllArticles((page-1)*pageSize, pageSize, uint(authorId), uint(sectionId))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "internal server error")
 	} else {
 		c.JSON(http.StatusOK, model.ListArticlesResponse{
 			Articles: articles,
-			Total: total,
-			Page: page,
+			Total:    total,
+			Page:     page,
 			PageSize: pageSize,
 		})
 	}
@@ -118,7 +125,7 @@ func GetArticleByArticleId(c *gin.Context) {
 		} else {
 			c.Error(err)
 		}
-	} else{
+	} else {
 		c.JSON(http.StatusOK, article)
 	}
 }
@@ -207,6 +214,81 @@ func DeleteArticleById(c *gin.Context) {
 	if err != nil {
 		c.Error(err)
 	} else {
-		c.JSON(http.StatusNoContent, "Successfully delete article with id "+ idStr)
+		c.JSON(http.StatusNoContent, "Successfully delete article with id "+idStr)
+	}
+}
+
+func ListAllArticlesDynamo(c *gin.Context) {
+	articles, err := service.ListAllArticlesDynamo()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+	} else {
+		c.JSON(http.StatusOK, model.ListArticlesResponseD{
+			Articles: articles,
+		})
+	}
+}
+
+func GetArticleByAuthorIdDynamo(c *gin.Context) {
+	authorIdStr := c.Param("authorId")
+	authorId, err := strconv.Atoi(authorIdStr)
+	if err != nil {
+		log.Errorf("[router.GetArticleByAuthorIdDynamo] failed to parse author id %v, err=%v\n", authorIdStr, err)
+		c.JSON(http.StatusBadRequest, "invalid author id")
+		return
+	}
+	articles, err := service.GetArticleByAuthorIdDynamo(uint(authorId))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+	} else {
+		c.JSON(http.StatusOK, articles)
+	}
+}
+
+func CreateArticleDynamo(c *gin.Context) {
+	article := model.DArticle{}
+	if err := c.ShouldBind(&article); err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	}
+	err := service.CreateArticleDynamo(article)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+	} else {
+		c.JSON(http.StatusCreated, "Create Successfully")
+	}
+}
+
+func UpdateArticleDynamo(c *gin.Context) {
+	updateArticle := model.DArticle{}
+	if err := c.ShouldBind(&updateArticle); err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	}
+	err := service.UpdateArticleDynamo(updateArticle)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+	} else {
+		c.JSON(http.StatusCreated, "Updated Successfully")
+	}
+}
+
+func DeleteArticleDynamo(c *gin.Context) {
+	deleteArticle := model.DArticle{}
+	if err := c.ShouldBind(&deleteArticle); err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	}
+	err := service.DeleteArticleDynamo(deleteArticle)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+	} else {
+		c.JSON(http.StatusNoContent, "Deleted Successfully")
+	}
+}
+
+func TestTransactionConflict(c *gin.Context) {
+	err := service.TestTransactionConflict()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+	} else {
+		c.JSON(http.StatusNoContent, "")
 	}
 }
