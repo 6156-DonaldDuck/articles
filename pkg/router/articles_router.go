@@ -249,10 +249,10 @@ func CreateArticleDynamo(c *gin.Context) {
 	if err := c.ShouldBind(&article); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 	}
-	title, err := service.CreateArticleDynamo(article)
+	res, err := service.CreateArticleDynamo(article)
 	if err != nil {
 		c.Error(err)
 	} else {
-		c.JSON(http.StatusCreated, title)
+		c.JSON(http.StatusCreated, res)
 	}
 }

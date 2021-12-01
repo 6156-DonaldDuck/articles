@@ -13,8 +13,8 @@ type Article struct {
 }
 
 type DArticle struct {
-	AuthorId uint
-	Title string 
-	Content string
-	SectionId uint
+	AuthorId uint `json:"author_id" dynamodbav:"AuthorId"`
+	Title string `json:"title" dynamodbav:"Title"`
+	Content string `json:"content" dynamodbav:"Content"`
+	SectionId uint `json:"section_id" dynamodbav:"SectionId"`
 }

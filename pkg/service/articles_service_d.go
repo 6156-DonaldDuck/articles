@@ -7,8 +7,8 @@ import (
     "github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
-	// log "github.com/sirupsen/logrus"
 	"fmt"
+	// "strconv"
 )
 
 var tableName string = "Articles"
@@ -75,48 +75,58 @@ func GetArticleByAuthorIdDynamo(authorId uint) ([]string, error) {
     return res, err
 }
 
-// Conditional Expression
-func CreateArticleDynamo(article model.DArticle) {
-	expr, err := expression.NewBuilder().WithUpdate(
-        expression.Set(
-            expression.Name("AuthorId"),
-            expression.Value(article.authorId),
-        ),
-    ).WithCondition(
-        expression.And(
-            expression.AttributeNotExists(
-                expression.Name("AuthorId"),
-            ),
-            expression.Equal(
-                expression.Name("Title"),
-                expression.Value(article.title),
-            ),
-        ),
-    ).Build()
-    if err != nil {
-        panic(err)
-    }
-	ut, err := db.DynamoDBConn.UpdateItem(&dynamodb.UpdateItemInput{
-        TableName: aws.String(tableName),
-        Key: map[string]types.AttributeValue{
-            "AuthorId": &types.AttributeValueMemberS{Value: article.authorId},
-        },
-        UpdateExpression:          expr.Update(),
-        ExpressionAttributeNames:  expr.Names(),
-        ExpressionAttributeValues: expr.Values(),
-        ConditionExpression:       expr.Condition(),
-    })
+// Update Expression
+// func CreateArticleDynamo(article model.DArticle) (model.DArticle, error){
+// 	// Create an update to set two fields in the table.
+// 	update := expression.Set(
+// 		expression.Name("Content"),
+// 		expression.Value(article.Content),
+// 	).Set(
+// 		expression.Name("SectionId"),
+// 		expression.Value(article.SectionId),
+// 	)
 
-    if err != nil {
-        panic(err)
-    }
+// 	// Create the DynamoDB expression from the Update.
+// 	expr, err := expression.NewBuilder().
+// 		WithUpdate(update).
+// 		Build()
 
-    fmt.Println(out.Attributes)
-}
+// 	// Use the built expression to populate the DynamoDB UpdateItem API
+// 	// input parameters.
+// 	input := &dynamodb.UpdateItemInput{
+// 		ExpressionAttributeNames:  expr.Names(),
+// 		ExpressionAttributeValues: expr.Values(),
+// 		Key: map[string]*dynamodb.AttributeValue{
+// 			"AuthorId": {
+// 				// N: aws.Int(strconv.Itoa(int(article.AuthorId))),
+// 				N: aws.Int(1),
+// 			},
+// 			"Title": {
+// 				S: aws.String(article.Title),
+// 			},
+// 		},
+// 		ReturnValues:     aws.String("ALL_NEW"),
+// 		TableName:        aws.String(tableName),
+// 		UpdateExpression: expr.Update(),
+// 	}
 
-// func UpdateArticleDynamo(updateInfo model.Article) error {
+// 	result, err := db.DynamoDBConn.UpdateItem(input)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	fmt.Println(result)
+// 	res := model.DArticle{}
+// 	err = dynamodbattribute.UnmarshalMap(result.Attributes , &res)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
 
+// 	return res, err
 // }
+
+func UpdateArticleDynamo(updateInfo model.Article) error {
+
+}
 
 // func DeleteArticleByIdDynamo(articleId uint) error {
 
