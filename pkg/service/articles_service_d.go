@@ -164,3 +164,55 @@ func DeleteArticleDynamo(article model.DArticle) error {
 	_, err := db.DynamoDBConn.DeleteItem(input)
 	return err
 }
+
+func TestTransactionConflict() error {
+    var (
+        transactItems1 []*dynamodb.TransactWriteItem
+        transactItems2 []*dynamodb.TransactWriteItem
+    )
+
+    items1 := []model.DArticle{
+        {AuthorId: 1, Title: "transaction1-1"},
+        {AuthorId: 2, Title: "transaction1-2"},
+        {AuthorId: 3, Title: "transaction1-3"},
+    }
+
+    for _, item := range items1 {
+        itemav, _ := dynamodbattribute.MarshalMap(item)
+        transactItems1 = append(transactItems1, &dynamodb.TransactWriteItem{
+            Put: &dynamodb.Put{
+                TableName: aws.String(tableName),
+                Item:      itemav,
+            },
+        })
+    }
+
+    _, err := db.DynamoDBConn.TransactWriteItems(&dynamodb.TransactWriteItemsInput{
+        TransactItems: transactItems1,
+    }) 
+	if err != nil {
+		return err
+	}
+
+    items2 := []model.DArticle{
+        {AuthorId: 1, Title: "transaction2-1"},
+        {AuthorId: 2, Title: "transaction1-2"},
+        {AuthorId: 3, Title: "transaction1-3"},
+    }
+
+    for _, item := range items2 {
+        itemav, _ := dynamodbattribute.MarshalMap(item)
+        transactItems2 = append(transactItems2, &dynamodb.TransactWriteItem{
+            Put: &dynamodb.Put{
+                TableName:           aws.String(tableName),
+                Item:                itemav,
+                ConditionExpression: aws.String("attribute_not_exists(AuthorId) and attribute_not_exists(Title)"),
+            },
+        })
+    }
+
+    _, err = db.DynamoDBConn.TransactWriteItems(&dynamodb.TransactWriteItemsInput{
+        TransactItems: transactItems2,
+    })
+	return err
+}

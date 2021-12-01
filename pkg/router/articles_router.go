@@ -38,6 +38,7 @@ func InitRouter() {
 		apiv1.POST("/dynamo/articles", CreateArticleDynamo)
 		apiv1.PUT("/dynamo/articles", UpdateArticleDynamo)
 		apiv1.DELETE("/dynamo/articles", DeleteArticleDynamo)
+		apiv1.POST("/test/articles", TestTransactionConflict)
 	}
 
 	r.Run(":" + config.Configuration.Port)
@@ -280,5 +281,14 @@ func DeleteArticleDynamo(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err)
 	} else {
 		c.JSON(http.StatusNoContent, "Deleted Successfully")
+	}
+}
+
+func TestTransactionConflict(c *gin.Context) {
+	err := service.TestTransactionConflict()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+	} else {
+		c.JSON(http.StatusNoContent, "")
 	}
 }
