@@ -2,6 +2,9 @@ package router
 
 import (
 	"errors"
+	"net/http"
+	"strconv"
+
 	docs "github.com/6156-DonaldDuck/articles/docs"
 	"github.com/6156-DonaldDuck/articles/pkg/config"
 	"github.com/6156-DonaldDuck/articles/pkg/model"
@@ -12,8 +15,6 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
-	"net/http"
-	"strconv"
 )
 
 func InitRouter() {
@@ -34,7 +35,7 @@ func InitRouter() {
 		apiv1.DELETE("/articles/:articleId", DeleteArticleById)
 
 		apiv1.GET("/dynamo/articles", ListAllArticlesDynamo)
-		apiv1.GET("/dynamo/articles/:authorId", GetArticleByAuthorIdDynamo)		
+		apiv1.GET("/dynamo/articles/:authorId", GetArticleByAuthorIdDynamo)
 		apiv1.POST("/dynamo/articles", CreateArticleDynamo)
 		// apiv1.PUT("/articles/:articleId", UpdateArticleById)
 		// apiv1.DELETE("/articles/:articleId", DeleteArticleById)
@@ -86,14 +87,14 @@ func ListAllArticles(c *gin.Context) {
 		return
 	}
 
-	articles, total, err := service.ListAllArticles((page - 1) * pageSize, pageSize, uint(authorId), uint(sectionId))
+	articles, total, err := service.ListAllArticles((page-1)*pageSize, pageSize, uint(authorId), uint(sectionId))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "internal server error")
 	} else {
 		c.JSON(http.StatusOK, model.ListArticlesResponse{
 			Articles: articles,
-			Total: total,
-			Page: page,
+			Total:    total,
+			Page:     page,
 			PageSize: pageSize,
 		})
 	}
@@ -124,7 +125,7 @@ func GetArticleByArticleId(c *gin.Context) {
 		} else {
 			c.Error(err)
 		}
-	} else{
+	} else {
 		c.JSON(http.StatusOK, article)
 	}
 }
@@ -213,11 +214,11 @@ func DeleteArticleById(c *gin.Context) {
 	if err != nil {
 		c.Error(err)
 	} else {
-		c.JSON(http.StatusNoContent, "Successfully delete article with id "+ idStr)
+		c.JSON(http.StatusNoContent, "Successfully delete article with id "+idStr)
 	}
 }
 
-func ListAllArticlesDynamo(c *gin.Context) {	
+func ListAllArticlesDynamo(c *gin.Context) {
 	articles, err := service.ListAllArticlesDynamo()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "internal server error")
@@ -254,5 +255,35 @@ func CreateArticleDynamo(c *gin.Context) {
 		c.Error(err)
 	} else {
 		c.JSON(http.StatusCreated, title)
+	}
+}
+
+func UpdateArticleDynamo(c *gin.Context) {
+	updateArticle := model.Article{}
+	if err := c.ShouldBind(&updateArticle); err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	}
+	err := service.UpdateArticleDynamo(updateArticle)
+	if err != nil {
+		c.Error(err)
+	} else {
+		c.JSON(http.StatusCreated, "Updated Successfully")
+	}
+}
+
+func DeleteArticleByIdDynamo(c *gin.Context) {
+	articleIdStr := c.Param("articleId")
+	articleId, err := strconv.Atoi(articleIdStr)
+	if err != nil {
+		log.Errorf("[router.DeleteArticleByIdDynamo] failed to parse article id %v, err=%v\n", articleIdStr, err)
+		c.JSON(http.StatusBadRequest, "invalid article id")
+		return
+	}
+
+	deleteErr := service.DeleteArticleByIdDynamo(uint(articleId))
+	if deleteErr != nil {
+		c.Error(deleteErr)
+	} else {
+		c.JSON(http.StatusCreated, "Deleted Successfully")
 	}
 }
