@@ -79,28 +79,33 @@ func GetArticleByAuthorIdDynamo(authorId uint) ([]string, error) {
 func CreateArticleDynamo(article model.DArticle) error {
 	expr, err := expression.NewBuilder().WithUpdate(
 		expression.Set(
-			expression.Name("AuthorId"),
-			expression.Value(article.AuthorId),
+			expression.Name("Content"),
+			expression.Value(article.Content),
+		).Set(
+			expression.Name("SectionId"),
+			expression.Value(article.SectionId),
 		),
 	).WithCondition(
 		expression.And(
 			expression.AttributeNotExists(
 				expression.Name("AuthorId"),
 			),
-			expression.Equal(
+			expression.AttributeNotExists(
 				expression.Name("Title"),
-				expression.Value(article.Title),
 			),
 		),
 	).Build()
 	if err != nil {
 		return err
 	}
-	ut, err := db.DynamoDBConn.UpdateItem(&dynamodb.UpdateItemInput{
+	_, err = db.DynamoDBConn.UpdateItem(&dynamodb.UpdateItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]*dynamodb.AttributeValue{
 			"AuthorId": {
-				S: aws.String(string(article.AuthorId)),
+				N: aws.String(strconv.Itoa(int(article.AuthorId))),
+			},
+			"Title": {
+				S: aws.String(article.Title),
 			},
 		},
 		UpdateExpression:          expr.Update(),
@@ -108,7 +113,6 @@ func CreateArticleDynamo(article model.DArticle) error {
 		ExpressionAttributeValues: expr.Values(),
 		ConditionExpression:       expr.Condition(),
 	})
-	fmt.Println(ut.Attributes)
 	return err
 }
 

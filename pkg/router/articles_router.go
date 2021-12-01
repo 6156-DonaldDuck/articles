@@ -220,7 +220,7 @@ func DeleteArticleById(c *gin.Context) {
 func ListAllArticlesDynamo(c *gin.Context) {
 	articles, err := service.ListAllArticlesDynamo()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, "internal server error")
+		c.JSON(http.StatusInternalServerError, err)
 	} else {
 		c.JSON(http.StatusOK, model.ListArticlesResponseD{
 			Articles: articles,
@@ -238,7 +238,7 @@ func GetArticleByAuthorIdDynamo(c *gin.Context) {
 	}
 	articles, err := service.GetArticleByAuthorIdDynamo(uint(authorId))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, "internal server error")
+		c.JSON(http.StatusInternalServerError, err)
 	} else {
 		c.JSON(http.StatusOK, articles)
 	}
@@ -251,7 +251,7 @@ func CreateArticleDynamo(c *gin.Context) {
 	}
 	err := service.CreateArticleDynamo(article)
 	if err != nil {
-		c.Error(err)
+		c.JSON(http.StatusInternalServerError, err)
 	} else {
 		c.JSON(http.StatusCreated, "Create Successfully")
 	}
@@ -264,7 +264,7 @@ func UpdateArticleDynamo(c *gin.Context) {
 	}
 	err := service.UpdateArticleDynamo(updateArticle)
 	if err != nil {
-		c.Error(err)	
+		c.JSON(http.StatusInternalServerError, err)
 	} else {
 		c.JSON(http.StatusCreated, "Updated Successfully")
 	}
@@ -277,7 +277,7 @@ func DeleteArticleDynamo(c *gin.Context) {
 	}
 	err := service.DeleteArticleDynamo(deleteArticle)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, "internal server error")
+		c.JSON(http.StatusInternalServerError, err)
 	} else {
 		c.JSON(http.StatusNoContent, "Deleted Successfully")
 	}
