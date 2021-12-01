@@ -4,7 +4,6 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-
 	docs "github.com/6156-DonaldDuck/articles/docs"
 	"github.com/6156-DonaldDuck/articles/pkg/config"
 	"github.com/6156-DonaldDuck/articles/pkg/model"
@@ -37,8 +36,8 @@ func InitRouter() {
 		apiv1.GET("/dynamo/articles", ListAllArticlesDynamo)
 		apiv1.GET("/dynamo/articles/:authorId", GetArticleByAuthorIdDynamo)
 		apiv1.POST("/dynamo/articles", CreateArticleDynamo)
-		// apiv1.PUT("/articles/:articleId", UpdateArticleById)
-		// apiv1.DELETE("/articles/:articleId", DeleteArticleById)
+		apiv1.PUT("/dynamo/articles", UpdateArticleDynamo)
+		apiv1.DELETE("/dynamo/articles", DeleteArticleDynamo)
 	}
 
 	r.Run(":" + config.Configuration.Port)
@@ -250,40 +249,36 @@ func CreateArticleDynamo(c *gin.Context) {
 	if err := c.ShouldBind(&article); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 	}
-	res, err := service.CreateArticleDynamo(article)
+	err := service.CreateArticleDynamo(article)
 	if err != nil {
 		c.Error(err)
 	} else {
-		c.JSON(http.StatusCreated, res)
+		c.JSON(http.StatusCreated, "Create Successfully")
 	}
 }
 
 func UpdateArticleDynamo(c *gin.Context) {
-	updateArticle := model.Article{}
+	updateArticle := model.DArticle{}
 	if err := c.ShouldBind(&updateArticle); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 	}
 	err := service.UpdateArticleDynamo(updateArticle)
 	if err != nil {
-		c.Error(err)
+		c.Error(err)	
 	} else {
 		c.JSON(http.StatusCreated, "Updated Successfully")
 	}
 }
 
-func DeleteArticleByIdDynamo(c *gin.Context) {
-	articleIdStr := c.Param("articleId")
-	articleId, err := strconv.Atoi(articleIdStr)
-	if err != nil {
-		log.Errorf("[router.DeleteArticleByIdDynamo] failed to parse article id %v, err=%v\n", articleIdStr, err)
-		c.JSON(http.StatusBadRequest, "invalid article id")
-		return
+func DeleteArticleDynamo(c *gin.Context) {
+	deleteArticle := model.DArticle{}
+	if err := c.ShouldBind(&deleteArticle); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 	}
-
-	deleteErr := service.DeleteArticleByIdDynamo(uint(articleId))
-	if deleteErr != nil {
-		c.Error(deleteErr)
+	err := service.DeleteArticleDynamo(deleteArticle)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, "internal server error")
 	} else {
-		c.JSON(http.StatusCreated, "Deleted Successfully")
+		c.JSON(http.StatusNoContent, "Deleted Successfully")
 	}
 }

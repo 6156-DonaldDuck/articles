@@ -16,8 +16,8 @@ func Security() gin.HandlerFunc {
 			"/swagger/*any": {"GET"},
 			"/api/v1/articles": {"GET", "POST"},			
 			"/api/v1/articles/:articleId": {"GET", "PUT", "DELETE"},
-			"/api/v1/dynamo/articles": {"GET", "POST"},
-			"/api/v1/dynamo/articles/:authorId": {"GET", "PUT", "DELETE"},
+			"/api/v1/dynamo/articles": {"GET", "POST", "PUT", "DELETE"},
+			"/api/v1/dynamo/articles/:authorId": {"GET"},
 		}
 
 		// Figure out whether current request is in white list.

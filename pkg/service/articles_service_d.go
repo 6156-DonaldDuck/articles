@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"fmt"
-	// "strconv"
+	"strconv"
 )
 
 var tableName string = "Articles"
@@ -40,7 +40,7 @@ func GetArticleByAuthorIdDynamo(authorId uint) ([]string, error) {
 		expression.Name("Title"),
 	)
 
-	// Using the filter and projections create a DynamoDB expression from the two.
+	// Using the filter and projections create a DynamoDB expression.
 	expr, err := expression.NewBuilder().
 		WithFilter(filt).
 		WithProjection(proj).
@@ -76,11 +76,11 @@ func GetArticleByAuthorIdDynamo(authorId uint) ([]string, error) {
 }
 
 // Conditional Expression
-func CreateArticleDynamo(article model.DArticle) {
+func CreateArticleDynamo(article model.DArticle) error {
 	expr, err := expression.NewBuilder().WithUpdate(
 		expression.Set(
 			expression.Name("AuthorId"),
-			expression.Value(article.authorId),
+			expression.Value(article.AuthorId),
 		),
 	).WithCondition(
 		expression.And(
@@ -89,44 +89,42 @@ func CreateArticleDynamo(article model.DArticle) {
 			),
 			expression.Equal(
 				expression.Name("Title"),
-				expression.Value(article.title),
+				expression.Value(article.Title),
 			),
 		),
 	).Build()
 	if err != nil {
-		panic(err)
+		return err
 	}
 	ut, err := db.DynamoDBConn.UpdateItem(&dynamodb.UpdateItemInput{
 		TableName: aws.String(tableName),
-		Key: map[string]types.AttributeValue{
-			"AuthorId": &types.AttributeValueMemberS{Value: article.authorId},
+		Key: map[string]*dynamodb.AttributeValue{
+			"AuthorId": {
+				S: aws.String(string(article.AuthorId)),
+			},
 		},
 		UpdateExpression:          expr.Update(),
 		ExpressionAttributeNames:  expr.Names(),
 		ExpressionAttributeValues: expr.Values(),
 		ConditionExpression:       expr.Condition(),
 	})
-
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(out.Attributes)
+	fmt.Println(ut.Attributes)
+	return err
 }
 
-func UpdateArticleDynamo(updateInfo model.Article) error {
+func UpdateArticleDynamo(updateInfo model.DArticle) error {
 	update := expression.Set(
-		expression.Name("Title"),
-		expression.Value(updateInfo.Title),
-	).Set(
 		expression.Name("Content"),
 		expression.Value(updateInfo.Content),
+	).Set(
+		expression.Name("SectionId"),
+		expression.Value(updateInfo.SectionId),
 	)
 
 	expr, err := expression.NewBuilder().WithUpdate(update).Build()
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 	result, err := db.DynamoDBConn.UpdateItem(&dynamodb.UpdateItemInput{
 		TableName:                 aws.String(tableName),
@@ -134,7 +132,7 @@ func UpdateArticleDynamo(updateInfo model.Article) error {
 		ExpressionAttributeValues: expr.Values(),
 		Key: map[string]*dynamodb.AttributeValue{
 			"AuthorId": {
-				S: aws.String(string(updateInfo.AuthorId)),
+				N: aws.String(strconv.Itoa(int(updateInfo.AuthorId))),
 			},
 			"Title": {
 				S: aws.String(updateInfo.Title),
@@ -143,30 +141,22 @@ func UpdateArticleDynamo(updateInfo model.Article) error {
 		ReturnValues:     aws.String("ALL_NEW"),
 		UpdateExpression: expr.Update(),
 	})
-	if err != nil {
-		panic(err)
-	} else {
-		return err
-	}
-
 	fmt.Println(result)
-	return nil
+	return err
 }
 
-func DeleteArticleByIdDynamo(articleId uint) error {
+func DeleteArticleDynamo(article model.DArticle) error {
 	input := &dynamodb.DeleteItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
-			"ArticleId": {
-				S: aws.String(string(articleId)),
+			"AuthorId": {
+				N: aws.String(strconv.Itoa(int(article.AuthorId))),
+			},
+			"Title": {
+				S: aws.String(article.Title),
 			},
 		},
 		TableName: aws.String(tableName),
 	}
-	result, err := db.DynamoDBConn.DeleteItem(input)
-
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(result)
-	return nil
+	_, err := db.DynamoDBConn.DeleteItem(input)
+	return err
 }
